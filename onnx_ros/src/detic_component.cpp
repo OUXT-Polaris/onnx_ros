@@ -16,8 +16,10 @@ DeticComponent::DeticComponent(const rclcpp::NodeOptions & options)
   }()),
   session_(
     env_,
-    ament_index_cpp::get_package_share_directory("onnx_ros") +
-      "/models/Detic_C2_SwinB_896_4x_IN-21K+COCO_lvis_op16.onnx",
+    std::string(
+      ament_index_cpp::get_package_share_directory("onnx_ros") +
+      "/models/Detic_C2_SwinB_896_4x_IN-21K+COCO_lvis_op16.onnx")
+      .c_str(),
     session_options_),
   run_options_(Ort::RunOptions())
 {
@@ -48,8 +50,10 @@ void DeticComponent::callback(const sensor_msgs::msg::Image::SharedPtr msg)
   std::copy(input_image_tensor.begin(), input_image_tensor.end(), input.begin());
   const std::array<const char *, 2> input_names = {"img", "im_hw"};
   const std::array<const char *, 4> output_names = {"boxes", "scores", "classes", "masks"};
-  // auto outputTensor = Ort::Value::CreateTensor<float>(
-  //   memory_info, results.data(), results.size(), outputShape.data(), outputShape.size());
+  std::array<int64_t, 2> input_hw = {800, 800};
+  const std::array<int64_t, 2> input_hw_shape = {1, 2};
+  // Ort::Value::CreateTensor<float>(
+  //   memory_info, input_hw.data(), input_hw.size(), input_hw_shape.data(), input_hw_shape.size());
 
   // try {
   //   session.Run(

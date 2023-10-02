@@ -20,7 +20,7 @@ public:
   virtual ~DeticComponent();
 
 private:
-  const Ort::Env env_;
+  Ort::Env env_;
   const Ort::SessionOptions session_options_;
   const Ort::Session session_;
   const Ort::RunOptions run_options_;

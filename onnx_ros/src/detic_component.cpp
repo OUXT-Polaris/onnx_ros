@@ -39,29 +39,39 @@ void DeticComponent::callback(const sensor_msgs::msg::Image::SharedPtr msg)
   constexpr int64_t width = 800;
   constexpr int64_t height = 800;
   // HWC -> CHW
-  std::vector<float> input_image_tensor;
+  std::vector<float> input_image_vec;
   for (size_t ch = 0; ch < 3; ++ch) {
     for (size_t i = ch; i < vec.size(); i += 3) {
-      input_image_tensor.emplace_back(vec[i]);
+      input_image_vec.emplace_back(vec[i]);
     }
   }
-  const std::array<int64_t, 4> input_shape = {1, channels, height, width};
+  const std::array<int64_t, 4> input_image_shape = {1, channels, height, width};
   std::array<float, channels * width * height> input;
-  std::copy(input_image_tensor.begin(), input_image_tensor.end(), input.begin());
+  std::copy(input_image_vec.begin(), input_image_vec.end(), input.begin());
+  auto input_image_tensor = Ort::Value::CreateTensor<float>(
+    memory_info, input.data(), input.size(), input_image_shape.data(), input_image_shape.size());
+
   const std::array<const char *, 2> input_names = {"img", "im_hw"};
   const std::array<const char *, 4> output_names = {"boxes", "scores", "classes", "masks"};
   std::array<int64_t, 2> input_hw = {800, 800};
   const std::array<int64_t, 2> input_hw_shape = {1, 2};
-  // Ort::Value::CreateTensor<float>(
-  //   memory_info, input_hw.data(), input_hw.size(), input_hw_shape.data(), input_hw_shape.size());
+  auto input_hw_tensor = Ort::Value::CreateTensor<int64_t>(
+    memory_info, input_hw.data(), input_hw.size(), input_hw_shape.data(), input_hw_shape.size());
 
-  // try {
-  //   session.Run(
-  //     runOptions, input_names.data(), &inputTensor, 1, output_names.data(), &outputTensor, 1);
-  // } catch (Ort::Exception & e) {
-  //   RCLCPP_ERROR_STREAM(get_logger(), e.what());
-  //   return;
-  // }
+  Ort::Value * input_tensors[2];
+  input_tensors[0] = &input_image_tensor;
+  input_tensors[1] = &input_hw_tensor;
+
+  // Ort::Value * output_tensors[4];
+
+  try {
+    session_.Run(
+      run_options_, input_names.data(), (const Ort::Value *)&input_tensors, 2, output_names.data(),
+      4);
+  } catch (Ort::Exception & e) {
+    RCLCPP_ERROR_STREAM(get_logger(), e.what());
+    return;
+  }
 }
 
 }  // namespace onnx_ros

@@ -22,7 +22,7 @@ public:
 private:
   Ort::Env env_;
   const Ort::SessionOptions session_options_;
-  const Ort::Session session_;
+  Ort::Session session_;
   const Ort::RunOptions run_options_;
   void callback(const sensor_msgs::msg::Image::SharedPtr msg);
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;

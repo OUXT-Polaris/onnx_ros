@@ -24,7 +24,8 @@ DeticComponent::DeticComponent(const rclcpp::NodeOptions & options)
   run_options_(Ort::RunOptions())
 {
   image_sub_ = create_subscription<sensor_msgs::msg::Image>(
-    "image_raw", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) { callback(image); });
+    "image_raw", rclcpp::QoS(1).best_effort(),
+    [this](const sensor_msgs::msg::Image::SharedPtr image) { callback(image); });
 }
 
 DeticComponent::~DeticComponent() {}

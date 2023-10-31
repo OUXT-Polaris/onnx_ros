@@ -23,7 +23,7 @@ if (NOT TARGET onnxruntime-unofficial::onnxruntime)
         )
     elseif(UNIX)
         set_target_properties(onnxruntime-unofficial::onnxruntime PROPERTIES
-            IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libonnxruntime.so.1.4.0"
+            IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libonnxruntime.so"
         )
     else()
         message(FATAL_ERROR "unsupported platform.")

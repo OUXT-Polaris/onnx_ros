@@ -65,7 +65,7 @@ void DeticComponent::callback(const sensor_msgs::msg::Image::SharedPtr msg)
   // Ort::Value * output_tensors[4];
 
   try {
-    session_.Run(
+    std::vector<Ort::Value> output_tensors = session_.Run(
       run_options_, input_names.data(), (const Ort::Value *)&input_tensors, 2, output_names.data(),
       4);
   } catch (Ort::Exception & e) {

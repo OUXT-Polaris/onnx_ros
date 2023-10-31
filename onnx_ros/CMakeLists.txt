@@ -12,7 +12,10 @@ ament_auto_find_build_dependencies()
 ament_auto_add_library(detic_component SHARED
   src/detic_component.cpp
 )
-# target_link_libraries(detic_component onnxruntime)
+ament_auto_add_executable(detic_node
+  src/detic_component.cpp
+  src/detic_node.cpp
+)
 
 file(DOWNLOAD
 https://storage.googleapis.com/ailia-models/detic/Detic_C2_SwinB_896_4x_IN-21K+COCO_lvis_op16.onnx

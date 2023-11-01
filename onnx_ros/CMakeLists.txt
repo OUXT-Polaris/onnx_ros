@@ -16,6 +16,7 @@ ament_auto_add_executable(detic_node
   src/detic_component.cpp
   src/detic_node.cpp
 )
+target_link_libraries(detic_node glog)
 
 file(DOWNLOAD
 https://storage.googleapis.com/ailia-models/detic/Detic_C2_SwinB_896_4x_IN-21K+COCO_lvis_op16.onnx
